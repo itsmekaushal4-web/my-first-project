@@ -19,7 +19,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $errors["email"] = "Email is required!";
     }elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
         $errors["email"] = "Invalid email format!";
+    }else{
+        $sql = "SELECT * FROM users WHERE email='$email'";
+        $result = mysqli_query($conn, $sql);
+        if(mysqli_num_rows($result) > 0){
+            $errors["email"] = "Email already exists!";
+        }
     }
+
+
     if(empty($password)){
         $errors["password"] = "Password is required!";
     }elseif(strlen($password) < 8){
