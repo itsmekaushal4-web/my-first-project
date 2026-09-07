@@ -33,9 +33,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
 
     if(empty($errors)){
+        $password = password_hash($password, PASSWORD_BCRYPT);
         $sql = "Insert into users (fname, email, password) values ('$fname', '$email', '$password')";
         if(mysqli_query($conn, $sql)){
-            echo "New record created successfully";
+            // echo "New record created successfully";
+            header("Location: ../login.php?success=1");
+            exit();
         } else {
             $errors["signup"] = "Error creating user";
         }
