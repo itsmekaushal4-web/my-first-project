@@ -11,14 +11,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $errors["email"] = "Email is required!";
     }elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
         $errors["email"] = "Invalid email format!";
-    }else{
-        $sql = "SELECT * FROM users WHERE email='$email'";
-        $result = mysqli_query($conn, $sql);
-        if(mysqli_num_rows($result) > 0){
-            $errors["email"] = "Email already exists!";
-        }
     }
-
 
     if(empty($password)){
         $errors["password"] = "Password is required!";
@@ -27,18 +20,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
 
     if(empty($errors)){
-        $password = password_hash($password, PASSWORD_BCRYPT);
-        $sql = "Insert into users (fname, email, password) values ('$fname', '$email', '$password')";
-        if(mysqli_query($conn, $sql)){
-            // echo "New record created successfully";
-            header("Location: ../login.php?success=1");
-            exit();
-        } else {
-            $errors["signup"] = "Error creating user";
+        $sql = "SELECT * FROM users WHERE email='$email'";
+        $result = mysqli_query($conn, $sql);
+        if(mysqli_num_rows($result) > 0){
+            $user = mysqli_fetch_assoc($result);
+            if(password_verify($password, $user['password'])){
+                $_SESSION['username'] = $user['fname'];
+                header("Location: ../dashboard.php");
+                exit();
+            }else{
+                $errors["login"] = "Invalid password!";
+            }
+        }else{
+            $errors["login"] = "Invalid email!";
         }
     }
 
     $_SESSION['errors'] = $errors;
-    header("Location: ../registration.php");
+    header("Location: ../login.php");
     exit();
 }
