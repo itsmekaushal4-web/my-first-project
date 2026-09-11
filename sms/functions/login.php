@@ -26,7 +26,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $user = mysqli_fetch_assoc($result);
             if(password_verify($password, $user['password'])){
                 $_SESSION['username'] = $user['fname'];
-                header("Location: ../dashboard.php");
+                header("Location: ../index.php");
                 exit();
             }else{
                 $errors["login"] = "Invalid password!";
